@@ -28,12 +28,12 @@ public class AESConfig {
 
     private void readCommandArgs(String [] args)
     {
-        if (args.length != 4)
+        if (args.length != 3)
         {
             ErrorLog.printIncorrectArgs();
         }
-
-        switch (args[1])
+        
+        switch (args[0])
         {
             case "e":
                 mOption = Option.ENCRYPT;
@@ -44,8 +44,8 @@ public class AESConfig {
             default:
                 ErrorLog.printIncorrectArgs();
         }
-        mKeyFilename = args[2];
-        mInputFilename = args[3];
+        mKeyFilename = args[1];
+        mInputFilename = args[2];
     }
 
     private String mInputFilename;
