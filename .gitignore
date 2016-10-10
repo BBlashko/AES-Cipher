@@ -4,6 +4,7 @@
 **/.idea/
 ## File-based project format:
 *.iws
+*.class
 out/
 **/.idea_modules/
 
