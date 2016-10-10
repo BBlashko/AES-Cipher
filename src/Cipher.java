@@ -14,18 +14,18 @@ public class Cipher {
     }
 
     /**
-     * Galois table used for mixColumns
+     * Galois matrix used for multiplying in mixColumnsEnc
      */
-    public static final int[][] gal = 
+    public static final int[][] galoisMatrix = 
         {{0x02, 0x03, 0x01, 0x01},
         {0x01, 0x02, 0x03, 0x01},
         {0x01, 0x01, 0x02, 0x03},
         {0x03, 0x01, 0x01, 0x02}};
 
     /**
-     * Inverse Galois table used for invMixColumns
+     * Inverse Galois matrix used for multiplying in mixColumnsDec
      */
-    public static final int[][] invgal = 
+    public static final int[][] invGaloisMatrix = 
         {{0x0e, 0x0b, 0x0d, 0x09},
         {0x09, 0x0e, 0x0b, 0x0d},
         {0x0d, 0x09, 0x0e, 0x0b},
@@ -40,13 +40,32 @@ public class Cipher {
         
     }
 
-    public void mixColumns(int[][] state) {
-        int [][] tState = new[4][4];
+    public void mixColumnsEnc(int[][] state) {
+        int [][] tState = new int[4][4];
         for(int i = 0; i < 4; i++)
         {
-            System.arraycopy(arr[i], 0, tarr[i], 0, 4);
+            System.arraycopy(state[i], 0, tState[i], 0, 4);
         }
-        
+        for(int i = 0; i < 4; i++)
+        {   
+            for(int j = 0; j < 4; j++)
+            {
+                state[i][j] = matMult(tState, galoisMatrix, i, j);
+            }
+        }
+    }
+
+    private int matMult(int[][] tState, int[][] gal, int i, int j) {
+        int result = 0;
+        for(int k = 0; k < 4; k++)
+        {
+            //result ^= multHelper(tState[
+        }
+        return 0;
+    }
+
+    private int multHelper(int sEntry, int gEntry) {
+        return 0;
     }
 
     public void addRoundKeyEnc() {
