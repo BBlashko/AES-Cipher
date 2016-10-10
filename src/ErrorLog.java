@@ -6,7 +6,7 @@ public class ErrorLog {
     public static void printIncorrectArgs()
     {
         System.err.println("[ERROR] Incorrect command arguments");
-        System.out.println("Usage: AES <e/d> <keyFile> <inputFile");
+        System.out.println("Usage: AES <e/d> <keyFile> <inputFile>");
         System.exit(1);
     }
 }
