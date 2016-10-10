@@ -58,16 +58,66 @@ public class Cipher {
     private int matMult(int[][] tState, int[][] gal, int i, int j) {
         int result = 0;
         for(int k = 0; k < 4; k++)
-        {
-            //result ^= multHelper(tState[
+        {   
+            result ^= multHelper(tState[j][k], gal[i][k]);
+        }
+        return result;
+    }
+
+    /** Idea for this helper function was borrow from here: 
+        https://github.com/rishidewan33/Advanced-Encryption-Standard-Algorithm/blob/master/src/AES.java 
+    */
+    private int multHelper(int t, int g) {
+        int c1 = t / 16;
+        int c2 = t % 16;
+        if (g == 1) {
+            return t;
+        } else if (g == 2) {
+            return MultTables.mult2[c1][c2];
+        } else if (g == 3) {
+            return MultTables.mult3[c1][c2];
         }
         return 0;
     }
 
-    private int multHelper(int sEntry, int gEntry) {
-        return 0;
+    public void mixColumnsDec(int[][] state) {
+        int [][] tState = new int[4][4];
+        for(int i = 0; i < 4; i++)
+        {
+            System.arraycopy(state[i], 0, tState[i], 0, 4);
+        }
+        for(int i = 0; i < 4; i++)
+        {   
+            for(int j = 0; j < 4; j++)
+            {
+                state[i][j] = matMultDec(tState, invGaloisMatrix, i, j);
+            }
+        }
     }
 
+    private int matMultDec(int[][] tState, int[][] invGal, int i, int j) {
+        int result = 0;
+        for(int k = 0; k < 4; k++)
+        {   
+            result ^= multHelperDec(tState[j][k], invGal[i][k]);
+        }
+        return result;
+    }
+
+    private int multHelperDec(int t, int g) {
+        int c1 = t / 16;
+        int c2 = t % 16;
+        if (g == 9) {
+            return MultTables.mult9[c1][c2];
+        } else if (g == 0xb) {
+            return MultTables.mult11[c1][c2];
+        } else if (g == 0xd) {
+            return MultTables.mult13[c1][c2];
+        } else if (g == 0xe) {
+            return MultTables.mult14[c1][c2];
+        }
+        return 0;
+    }
     public void addRoundKeyEnc() {
         
     }
