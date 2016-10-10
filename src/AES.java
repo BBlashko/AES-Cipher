@@ -4,7 +4,9 @@ import java.util.ArrayList;
 public class AES {
     private Integer [] key;
     private ArrayList<Integer[]> inputFile;
-    private String outputFile;
+    private char [] outputFile;
+
+    private int [][][] stateArrays;
 
     private AESConfig aesConfig;
     private Cipher cipher;
@@ -13,14 +15,14 @@ public class AES {
     {
         aesConfig = new AESConfig(args);
         try {
-            key = this.hexToBinary(new File("./" + aesConfig.getKeyFilename())).get(0);
-            inputFile = this.hexToBinary(new File("./" + aesConfig.getInputFilename()));
+            this.key = this.hexToBinary(new File("./" + aesConfig.getKeyFilename())).get(0);
+            this.inputFile = this.hexToBinary(new File("./" + aesConfig.getInputFilename()));
         } catch (IOException e) {
             System.out.println("Invalid input files: " + e);
             System.exit(1);
         }
 
-       cipher = new Cipher(key);
+       this.cipher = new Cipher(key);
     }
 
     private ArrayList<Integer[]> hexToBinary(File file) throws IOException
@@ -60,29 +62,65 @@ public class AES {
         return binaryInputArray;
     }
 
-    private void encrypt()
-    {
+    private void createStateArrays() { 
+        this.stateArrays = new int [inputFile.size() * 2][4][4];
+
+        //create an array of 4x4 arrays for use with Cipher
+        for (int i = 0; i < inputFile.size(); i++) {
+            Integer [] row = inputFile.get(i);
+            for (int j = 0; j < 2; j++) {
+                int row_ctr = 0;
+                for (int k = 0; k < 16; k++) {
+                    if (k > 0 && k % 4 == 0) row_ctr++;
+                    this.stateArrays[((i*2) + j)][row_ctr][k % 4] = row[k + (j*16)];
+                }
+            }
+        }
+    }
+
+    private void printStateArrays() {
+        String output = "{";
+         for (int i = 0; i < this.stateArrays.length; i++) {
+            output += " {\n";
+            for (int j = 0; j < 4; j++) {
+                output += " {";
+                for (int k = 0; k < 4; k++) {
+                    output += " " + this.stateArrays[i][j][k]; 
+                }
+                output += " }\n";
+            }
+            output += " }";
+        }
+        output += " }";
+        System.out.println(output);
+    }
+
+
+    private void encrypt(Integer [] state) 
+    { 
 
     }
 
-    private void decrypt()
+    private void decrypt(Integer [] state)
     {
 
     }
 
     private void outputFile()
     {
-
+        //convert from integers back to hex for output
     }
 
     public static void main(String[] args)
     {
         //Initialize AES
         AES aes = new AES(args);
+        // Create initial state arrays for input
+        aes.createStateArrays();
+        aes.printStateArrays();
 
-        //Perform cipher
-        //loop over lines of input file here and put into 4X4 arrays?
+        //Perform cipher encrypt or decrypt with each state array
 
-        //right output file
+        //output file
     }
 }
