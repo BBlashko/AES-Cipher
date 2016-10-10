@@ -3,11 +3,11 @@
  */
 public class Cipher {
 
-    private Integer mKey[];
+    private int mKey[];
     private byte mState[];
     private byte mOut[];
 
-    public Cipher(Integer [] key) {
+    public Cipher(int [] key) {
     	this.mKey = key;
     }
 

@@ -1,8 +1,9 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class AES {
-    private Integer [] key;
+    private int [] key;
     private ArrayList<Integer[]> inputFile;
     private char [] outputFile;
 
@@ -15,7 +16,8 @@ public class AES {
     {
         aesConfig = new AESConfig(args);
         try {
-            this.key = this.hexToBinary(new File("./" + aesConfig.getKeyFilename())).get(0);
+            Integer [] temp_key = this.hexToBinary(new File("./" + aesConfig.getKeyFilename())).get(0);
+            this.key = Arrays.stream(temp_key).mapToInt(Integer::intValue).toArray();
             this.inputFile = this.hexToBinary(new File("./" + aesConfig.getInputFilename()));
         } catch (IOException e) {
             System.out.println("Invalid input files: " + e);
