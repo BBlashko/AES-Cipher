@@ -34,8 +34,38 @@ public class Cipher {
 
     }
     
-    public void shiftRows() {
-        
+    /** Shifts the row elements to the left */
+    public void shiftRowsEnc(int[][] state) {
+        int [][] tState = new int[4][4];
+        for(int i = 0; i < 4; i++)
+        {
+            System.arraycopy(state[i], 0, tState[i], 0, 4);
+        }
+
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 1; j < 4; j++)
+            {
+                state[i][j] = tState[(i + j) % 4][j];
+            }
+        }
+    }
+
+    /** Shifts the row elements to the right */
+    public void shiftRowsDec(int[][] state) {
+        int [][] tState = new int[4][4];
+        for(int i = 0; i < 4; i++)
+        {
+            System.arraycopy(state[i], 0, tState[i], 0, 4);
+        }
+
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 1; j < 4; j++)
+            {
+                state[i][j] = tState[((i + 4) - j) % 4][j];
+            }
+        }
     }
 
     public void mixColumnsEnc(int[][] state) {
