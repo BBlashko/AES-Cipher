@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class AES {
-    public final int numberOfRounds = 12;
+    public final int numberOfRounds = 14;
 
     private int [] key;
     private ArrayList<Integer[]> inputFile;
@@ -107,16 +107,16 @@ public class AES {
         // Initial Round
         this.cipher.keyExpansion();
         this.cipher.addRoundKey(state, roundKey); //Takes in first part of round key from key expansion
-        for (int i = 0; i < numberOfRounds; i++){
+        for (int i = 0; i < numberOfRounds - 2; i++) {
             this.cipher.subBytesEnc(state);
-            this.cipher.shiftRows();
+            this.cipher.shiftRowsEnc();
             this.cipher.mixColumnsEnc(state);
             this.cipher.addRoundKey(state, roundKey); //Takes in part of round key from key expansion
         }
 
         // Final Round
         this.cipher.subBytesEnc(state);
-        this.cipher.shiftRows();
+        this.cipher.shiftRowsEnc();
         this.cipher.addRoundKey(state, roundKey); 
     }
 
@@ -124,7 +124,21 @@ public class AES {
     //Rough outline of decrypt
     private void decrypt(int [][] state)
     {
+        int [][] roundKey = new int [4][4]; //CHANGE ME
+        // Initial Round
+        this.cipher.keyExpansion();
+        this.cipher.addRoundKey(state, roundKey); //Takes in first part of round key from key expansion
+        for (int i = numberOfRounds - 2; i >= 0; i--) {
+            this.cipher.shiftRowsDec();
+            this.cipher.subBytesDec(state);
+            this.cipher.addRoundKey(state, roundKey); //Takes in part of round key from key expansion
+            this.cipher.mixColumnsDec(state);
+        }
 
+        // Final Round
+        this.cipher.shiftRowsDec();
+        this.cipher.subBytesDec(state);
+        this.cipher.addRoundKey(state, roundKey);
     }
 
     private void outputFile()

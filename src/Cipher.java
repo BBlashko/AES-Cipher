@@ -101,7 +101,11 @@ public class Cipher {
     	}
     }
     
-    public void shiftRows() {
+    public void shiftRowsEnc() {
+        
+    }
+
+    public void shiftRowsDec() {
         
     }
 
