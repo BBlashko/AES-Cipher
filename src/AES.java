@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class AES {
+    public final int numberOfRounds = 12;
+
     private int [] key;
     private ArrayList<Integer[]> inputFile;
     private char [] outputFile;
@@ -97,13 +99,30 @@ public class AES {
         System.out.println(output);
     }
 
+    //*** NOT COMPLETE ***
+    //Rough outline of encrypt
+    private void encrypt(int [][] state) 
+    {
+        int [][] roundKey = new int [4][4]; //CHANGE ME
+        // Initial Round
+        this.cipher.keyExpansion();
+        this.cipher.addRoundKey(state, roundKey); //Takes in first part of round key from key expansion
+        for (int i = 0; i < numberOfRounds; i++){
+            this.cipher.subBytesEnc(state);
+            this.cipher.shiftRows();
+            this.cipher.mixColumnsEnc(state);
+            this.cipher.addRoundKey(state, roundKey); //Takes in part of round key from key expansion
+        }
 
-    private void encrypt(Integer [] state) 
-    { 
-
+        // Final Round
+        this.cipher.subBytesEnc(state);
+        this.cipher.shiftRows();
+        this.cipher.addRoundKey(state, roundKey); 
     }
 
-    private void decrypt(Integer [] state)
+    //*** NOT COMPLETE ***
+    //Rough outline of decrypt
+    private void decrypt(int [][] state)
     {
 
     }
