@@ -133,6 +133,7 @@ public class Cipher {
                 state[i][j] = tState[((i + 4) - j) % 4][j];
             }
         }
+    }
 
     public void mixColumnsEnc(int[][] state) {
         int [][] tState = new int[4][4];
