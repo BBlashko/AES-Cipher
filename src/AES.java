@@ -144,8 +144,8 @@ public class AES {
     {
         //Initialize AES
         AES aes = new AES(args);
-        // Create initial state arrays for input
 
+        // Create initial state arrays for input
         //TODO: @AGibbons fails at runtime due to change in conversion to binary.
 //        aes.createStateArrays();
 //        aes.printStateArrays();
