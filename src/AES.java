@@ -29,44 +29,38 @@ public class AES {
        this.cipher = new Cipher(key);
     }
 
+    //Converts an input file of hexadecimal numbers into Integers of size byte
     private ArrayList<Integer[]> hexToBinary(File file) throws IOException
     {
-        ArrayList<Integer[]> binaryInputArray = new ArrayList<Integer[]>();
+        ArrayList<Integer[]> binaryInputArray = new ArrayList<>();
 
-        try (InputStream in = new FileInputStream(file);
-            Reader reader = new InputStreamReader(in);
-            Reader buffer = new BufferedReader(reader)) {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
 
-            int r;
-            int row_index = 0;
-            int col_index = 0;
-            ArrayList<Integer> row = new ArrayList<Integer>();
+            String line;
 
-            while ((r = buffer.read()) != -1 ) {
-                char ch = (char) r;
+            while ((line = br.readLine()) != null) {
+                int length = line.length();
+                Integer[] row = new Integer[length / 2];
 
-                if (ch != '\n') { //loop over a single line of hex characters
-                    //check for non hex characters/line lengths here?
-                    Integer binaryInt = Integer.parseInt(String.valueOf(ch), 16);
-                    row.add(col_index, binaryInt);
-                    col_index++;
-
-                } else {
-                    Integer [] row_array = (Integer []) row.toArray(new Integer[row.size()]);
-                    binaryInputArray.add(row_index, row_array);
-                    row = new ArrayList<Integer>();
-                    row_index++;
-                    col_index = 0;
+                for (int i = 0; i < length; i += 2) {
+                    row[i / 2] = ((Character.digit(line.charAt(i), 16) << 4)
+                            + Character.digit(line.charAt(i+1), 16));
                 }
+                binaryInputArray.add(row);
             }
-
-            Integer [] row_array = (Integer []) row.toArray(new Integer[row.size()]);
-            binaryInputArray.add(row_index, row_array);
+        } catch (Exception e) {
+            ErrorLog.printError("Failed to open BufferedReader stream.", e);
+        } finally
+        {
+            br.close();
         }
+
         return binaryInputArray;
     }
 
-    private void createStateArrays() { 
+    private void createStateArrays() {
         this.stateArrays = new int [inputFile.size() * 2][4][4];
 
         //create an array of 4x4 arrays for use with Cipher
@@ -89,7 +83,7 @@ public class AES {
             for (int j = 0; j < 4; j++) {
                 output += " {";
                 for (int k = 0; k < 4; k++) {
-                    output += " " + this.stateArrays[i][j][k]; 
+                    output += " " + this.stateArrays[i][j][k];
                 }
                 output += " }\n";
             }
@@ -101,23 +95,23 @@ public class AES {
 
     //*** NOT COMPLETE ***
     //Rough outline of encrypt
-    private void encrypt(int [][] state) 
+    private void encrypt(int [][] state)
     {
         int [][] roundKey = new int [4][4]; //CHANGE ME
         // Initial Round
-        this.cipher.keyExpansion();
+        this.cipher.keyExpansion(numberOfRounds);
         this.cipher.addRoundKey(state, roundKey); //Takes in first part of round key from key expansion
         for (int i = 0; i < numberOfRounds - 2; i++) {
             this.cipher.subBytesEnc(state);
-            this.cipher.shiftRowsEnc();
+            this.cipher.shiftRowsEnc(state);
             this.cipher.mixColumnsEnc(state);
             this.cipher.addRoundKey(state, roundKey); //Takes in part of round key from key expansion
         }
 
         // Final Round
         this.cipher.subBytesEnc(state);
-        this.cipher.shiftRowsEnc();
-        this.cipher.addRoundKey(state, roundKey); 
+        this.cipher.shiftRowsEnc(state);
+        this.cipher.addRoundKey(state, roundKey);
     }
 
     //*** NOT COMPLETE ***
@@ -126,17 +120,17 @@ public class AES {
     {
         int [][] roundKey = new int [4][4]; //CHANGE ME
         // Initial Round
-        this.cipher.keyExpansion();
+        this.cipher.keyExpansion(numberOfRounds);
         this.cipher.addRoundKey(state, roundKey); //Takes in first part of round key from key expansion
         for (int i = numberOfRounds - 2; i >= 0; i--) {
-            this.cipher.shiftRowsDec();
+            this.cipher.shiftRowsDec(state);
             this.cipher.subBytesDec(state);
             this.cipher.addRoundKey(state, roundKey); //Takes in part of round key from key expansion
             this.cipher.mixColumnsDec(state);
         }
 
         // Final Round
-        this.cipher.shiftRowsDec();
+        this.cipher.shiftRowsDec(state);
         this.cipher.subBytesDec(state);
         this.cipher.addRoundKey(state, roundKey);
     }
@@ -151,8 +145,10 @@ public class AES {
         //Initialize AES
         AES aes = new AES(args);
         // Create initial state arrays for input
-        aes.createStateArrays();
-        aes.printStateArrays();
+
+        //TODO: @AGibbons fails at runtime due to change in conversion to binary.
+//        aes.createStateArrays();
+//        aes.printStateArrays();
 
         //Perform cipher encrypt or decrypt with each state array
 
