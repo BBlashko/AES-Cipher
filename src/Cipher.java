@@ -185,7 +185,7 @@ public class Cipher {
         {
             for(int j = 0; j < 4; j++)
             {
-                state[i][j] = matMultDec(tState, LookupTables.invGaloisMatrix, i, j);
+                state[j][i] = matMultDec(tState, LookupTables.invGaloisMatrix, i, j);
             }
         }
     }

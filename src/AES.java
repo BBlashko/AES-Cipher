@@ -39,7 +39,10 @@ public class AES {
         }
         else if (this.aesConfig.getOption() == AESConfig.Option.DECRYPT)
         {
-            // decrypt();
+            for (int i = 0; i < stateArrays.length; i++)
+            {
+                decryptState(stateArrays[i], roundKeys);
+            }
         }
     }
 
@@ -127,14 +130,14 @@ public class AES {
     private void encryptState(int [][] state, int [][][] roundKeys)
     {
         // Initial Round
-        this.cipher.addRoundKey(state, roundKeys[0]); //Takes in first part of round key from key expansion
+        this.cipher.addRoundKey(state, roundKeys[0]);
 
         // Do 13 rounds
         for (int i = 1; i < numberOfRounds; i++) {
             this.cipher.subBytesEnc(state);
             this.cipher.shiftRowsEnc(state);
             this.cipher.mixColumnsEnc(state);
-            this.cipher.addRoundKey(state, roundKeys[i]); //Takes in part of round key from key expansion
+            this.cipher.addRoundKey(state, roundKeys[i]);
         }
 
         // Final Round
@@ -143,25 +146,23 @@ public class AES {
         this.cipher.addRoundKey(state, roundKeys[numberOfRounds]);
     }
 
-    //*** NOT COMPLETE ***
-    //Rough outline of decrypt
-    private void decrypt(int [][] state)
+    //Decrypt each state
+    private void decryptState(int [][] state, int [][][] roundKeys)
     {
-        int [][] roundKey = new int [4][4]; //CHANGE ME
         // Initial Round
-        this.cipher.keyExpansion(numberOfRounds);
-        this.cipher.addRoundKey(state, roundKey); //Takes in first part of round key from key expansion
-        for (int i = numberOfRounds - 2; i >= 0; i--) {
+        this.cipher.addRoundKey(state, roundKeys[14]);
+        
+        for (int i = numberOfRounds - 1; i >= 1; i--) {
             this.cipher.shiftRowsDec(state);
             this.cipher.subBytesDec(state);
-            this.cipher.addRoundKey(state, roundKey); //Takes in part of round key from key expansion
+            this.cipher.addRoundKey(state, roundKeys[i]);
             this.cipher.mixColumnsDec(state);
         }
 
         // Final Round
         this.cipher.shiftRowsDec(state);
         this.cipher.subBytesDec(state);
-        this.cipher.addRoundKey(state, roundKey);
+        this.cipher.addRoundKey(state, roundKeys[0]);
     }
 
     private void outputFile() {
