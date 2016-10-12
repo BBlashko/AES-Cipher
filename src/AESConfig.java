@@ -1,6 +1,3 @@
-/**
- * Created by lynx on 07/10/16.
- */
 public class AESConfig {
 
     public enum Option { ENCRYPT,
@@ -32,7 +29,7 @@ public class AESConfig {
         {
             ErrorLog.printIncorrectArgs();
         }
-        
+
         switch (args[0])
         {
             case "e":

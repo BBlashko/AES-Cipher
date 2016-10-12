@@ -9,4 +9,11 @@ public class ErrorLog {
         System.out.println("Usage: AES <e/d> <keyFile> <inputFile>");
         System.exit(1);
     }
+
+    public static void printError(String msg, Exception e)
+    {
+        System.err.println("[ERROR] " + msg);
+        System.err.println(e);
+        System.exit(1);
+    }
 }
