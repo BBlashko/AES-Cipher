@@ -29,6 +29,18 @@ public class AES {
        this.cipher = new Cipher(key);
     }
 
+    public void performCipher()
+    {
+        if (this.aesConfig.getOption() == AESConfig.Option.ENCRYPT)
+        {
+            // encrypt();
+        }
+        else if (this.aesConfig.getOption() == AESConfig.Option.DECRYPT)
+        {
+            // decrypt();
+        }
+    }
+
     //Converts an input file of hexadecimal numbers into Integers of size byte
     private ArrayList<Integer[]> hexToBinary(File file) throws IOException
     {
@@ -151,6 +163,7 @@ public class AES {
 //        aes.printStateArrays();
 
         //Perform cipher encrypt or decrypt with each state array
+        aes.performCipher();
 
         //output file
     }
