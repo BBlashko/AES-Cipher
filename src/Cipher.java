@@ -11,7 +11,7 @@ public class Cipher {
     	this.mKey = key;
     }
 
-    public int[][] keyExpansion(int numRounds) {
+    public int[][][] keyExpansion(int numRounds) {
         int [] generatedKeyValues = new int[(numRounds + 1) * 16];
 
         //first int [] contains the original key
@@ -52,10 +52,10 @@ public class Cipher {
             }
         }
 
-        int [][] expandedKeys = new int[numRounds + 1][16];
+        int [][][] expandedKeys = new int[numRounds + 1][4][4];
         for (k = 0; k < generatedKeyValues.length; k++)
         {
-            expandedKeys[k / 16][k % 16] = generatedKeyValues[k];
+            expandedKeys[k / 16][(k % 16) / 4][(k % 16) % 4] = generatedKeyValues[k];
         }
         return expandedKeys;
     }
@@ -145,20 +145,9 @@ public class Cipher {
         {
             for(int j = 0; j < 4; j++)
             {
-                state[i][j] = matMult(tState, LookupTables.galoisMatrix, i, j);
+                state[j][i] = matMult(tState, LookupTables.galoisMatrix, i, j);
             }
         }
-    }
-
-    private int [] rotateLeft(int [] bytesIn)
-    {
-        int temp = bytesIn[0];
-        bytesIn[0] = bytesIn[1];
-        bytesIn[1] = bytesIn[2];
-        bytesIn[2] = bytesIn[3];
-        bytesIn[3] = temp;
-
-        return bytesIn;
     }
 
     private int matMult(int[][] tState, int[][] gal, int i, int j) {
@@ -223,6 +212,17 @@ public class Cipher {
             return LookupTables.mult14[c1][c2];
         }
         return 0;
+    }
+
+    private int [] rotateLeft(int [] bytesIn)
+    {
+        int temp = bytesIn[0];
+        bytesIn[0] = bytesIn[1];
+        bytesIn[1] = bytesIn[2];
+        bytesIn[2] = bytesIn[3];
+        bytesIn[3] = temp;
+
+        return bytesIn;
     }
 
     /**

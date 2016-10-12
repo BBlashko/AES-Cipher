@@ -5,6 +5,8 @@
 ## File-based project format:
 *.iws
 *.class
+*.enc*
+*.dec*
 out/
 **/.idea_modules/
 
