@@ -7,7 +7,6 @@ public class AES {
 
     private int [] key;
     private ArrayList<Integer[]> inputFile;
-    private char [] outputFile;
 
     private int [][][] stateArrays;
 
@@ -22,18 +21,21 @@ public class AES {
             this.key = Arrays.stream(temp_key).mapToInt(Integer::intValue).toArray();
             this.inputFile = this.hexToBinary(new File("./" + aesConfig.getInputFilename()));
         } catch (IOException e) {
-            System.out.println("Invalid input files: " + e);
-            System.exit(1);
+            ErrorLog.printError("Invalid input files: ", e);
         }
-
-       this.cipher = new Cipher(key);
+        this.cipher = new Cipher(key);
     }
 
     public void performCipher()
     {
+        // Create initial state arrays for input
+        int [][][] roundKeys = this.cipher.keyExpansion(numberOfRounds);
         if (this.aesConfig.getOption() == AESConfig.Option.ENCRYPT)
         {
-            // encrypt();
+            for (int i = 0; i < stateArrays.length; i++)
+            {
+                encryptState(stateArrays[i], roundKeys);
+            }
         }
         else if (this.aesConfig.getOption() == AESConfig.Option.DECRYPT)
         {
@@ -72,6 +74,23 @@ public class AES {
         return binaryInputArray;
     }
 
+    //Converts an int[][] matrix into a single hexadecimal string
+    private String convertIntMatrixToHexStringArray(int[][] num)
+    {
+        int arraySize = num.length;
+        String hexString = "";
+        for (int i = 0; i < arraySize; i++)
+        {
+            for (int j = 0; j < arraySize; j++)
+            {
+                hexString += String.format("%02X", num[i][j]);
+            }
+        }
+        return hexString;
+    }
+
+    //Parse input file and place each line of the file
+    //into an array of 16 byte arrays.
     private void createStateArrays() {
         this.stateArrays = new int [inputFile.size()][4][4];
 
@@ -104,25 +123,24 @@ public class AES {
         System.out.println(output);
     }
 
-    //*** NOT COMPLETE ***
-    //Rough outline of encrypt
-    private void encrypt(int [][] state)
+    //Encrypt each state
+    private void encryptState(int [][] state, int [][][] roundKeys)
     {
-        int [][] roundKey = new int [4][4]; //CHANGE ME
         // Initial Round
-        this.cipher.keyExpansion(numberOfRounds);
-        this.cipher.addRoundKey(state, roundKey); //Takes in first part of round key from key expansion
-        for (int i = 0; i < numberOfRounds - 2; i++) {
+        this.cipher.addRoundKey(state, roundKeys[0]); //Takes in first part of round key from key expansion
+
+        // Do 13 rounds
+        for (int i = 1; i < numberOfRounds; i++) {
             this.cipher.subBytesEnc(state);
             this.cipher.shiftRowsEnc(state);
             this.cipher.mixColumnsEnc(state);
-            this.cipher.addRoundKey(state, roundKey); //Takes in part of round key from key expansion
+            this.cipher.addRoundKey(state, roundKeys[i]); //Takes in part of round key from key expansion
         }
 
         // Final Round
         this.cipher.subBytesEnc(state);
         this.cipher.shiftRowsEnc(state);
-        this.cipher.addRoundKey(state, roundKey);
+        this.cipher.addRoundKey(state, roundKeys[numberOfRounds]);
     }
 
     //*** NOT COMPLETE ***
@@ -146,23 +164,65 @@ public class AES {
         this.cipher.addRoundKey(state, roundKey);
     }
 
-    private void outputFile()
-    {
-        //convert from integers back to hex for output
+    private void outputFile() {
+
+        ArrayList<String> output = new ArrayList<>();
+
+        //convert from integers back to hex strings for output
+        int stateSize = stateArrays.length;
+        for (int i = 0; i < stateSize; i++) {
+            output.add(convertIntMatrixToHexStringArray(stateArrays[i]));
+        }
+
+        String filename = generateFilename();
+        BufferedWriter bw = null;
+        try {
+            bw = new BufferedWriter(new FileWriter(filename));
+            for (String line : output)
+            {
+                bw.write(line);
+                bw.newLine();
+            }
+            bw.flush();
+            bw.close();
+        } catch (Exception e) {
+            ErrorLog.printError("Failed to output file. ", e);
+        } finally {
+            try {
+                bw.close();
+            } catch (IOException e)
+            {
+                ErrorLog.printError("Failed to close BufferedWriter.", e);
+            }
+        }
     }
 
-    public static void main(String[] args)
+    private String generateFilename()
     {
+        String filename = aesConfig.getInputFilename();
+        if (this.aesConfig.getOption() == AESConfig.Option.ENCRYPT)
+        {
+            filename += ".enc";
+        }
+        else if (this.aesConfig.getOption() == AESConfig.Option.DECRYPT)
+        {
+            filename += ".dec";
+        }
+        return filename;
+    }
+
+    public static void main(String[] args) {
         //Initialize AES
         AES aes = new AES(args);
 
-        // Create initial state arrays for input
+        //Parse input file and create 16 byte arrays
         aes.createStateArrays();
-        aes.printStateArrays();
+        //aes.printStateArrays();
 
         //Perform cipher encrypt or decrypt with each state array
         aes.performCipher();
 
         //output file
+        aes.outputFile();
     }
 }
