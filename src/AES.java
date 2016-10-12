@@ -66,17 +66,16 @@ public class AES {
         return binaryInputArray;
     }
 
-    private void createStateArrays() { 
-        this.stateArrays = new int [inputFile.size() * 2][4][4];
+    private void createStateArrays() {
+        this.stateArrays = new int [inputFile.size()][4][4];
 
         //create an array of 4x4 arrays for use with Cipher
         for (int i = 0; i < inputFile.size(); i++) {
             Integer [] row = inputFile.get(i);
-            for (int j = 0; j < 2; j++) {
-                int row_ctr = 0;
-                for (int k = 0; k < 16; k++) {
-                    if (k > 0 && k % 4 == 0) row_ctr++;
-                    this.stateArrays[((i*2) + j)][row_ctr][k % 4] = row[k + (j*16)];
+
+            for (int j = 0; j < 4; j++) {
+                for (int k = 0; k < 4; k++) {
+                    this.stateArrays[i][j][k] = row[(j*4) + k];
                 }
             }
         }
@@ -151,6 +150,7 @@ public class AES {
         //Initialize AES
         AES aes = new AES(args);
         // Create initial state arrays for input
+
         aes.createStateArrays();
         aes.printStateArrays();
 
