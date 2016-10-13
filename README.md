@@ -3,7 +3,7 @@ Seng360 - Assignment #2 - Implement the AES-Cipher algorithm
 
 Authors:
 Brett Blashko V00759982
-Andrew Wilson
+Andrew Wilson V00811707
 Alice Gibbons V00759604
 
 Compile:
