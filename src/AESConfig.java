@@ -1,12 +1,9 @@
 public class AESConfig {
 
     public enum Option { ENCRYPT,
-        DECRYPT}
+                         DECRYPT}
 
-    public AESConfig(String[] args)
-    {
-        readCommandArgs(args);
-    }
+    public AESConfig(String[] args) { readCommandArgs(args); }
 
     public String getInputFilename()
     {
@@ -18,20 +15,14 @@ public class AESConfig {
         return mKeyFilename;
     }
 
-    public Option getOption()
-    {
-        return mOption;
-    }
+    public Option getOption() { return mOption; }
 
-    private void readCommandArgs(String [] args)
-    {
-        if (args.length != 3)
-        {
+    private void readCommandArgs(String [] args) {
+        if (args.length != 3) {
             ErrorLog.printIncorrectArgs();
         }
 
-        switch (args[0])
-        {
+        switch (args[0]) {
             case "e":
                 mOption = Option.ENCRYPT;
                 break;
