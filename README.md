@@ -1,15 +1,15 @@
 # AES-Cipher
-Seng360 - Assignment #2 - Implement the AES-Cipher algorithm
+An Implementation of the AES-256 cipher algorithm
 
-Authors:
-Brett Blashko V00759982
-Andrew Wilson V00811707
-Alice Gibbons V00759604
+### Authors:
+Brett Blashko
+Andrew Wilson
+Alice Gibbons
 
-Compile:
+### Compile:
     javac *.java
 
-Usage:
+### Usage:
     java AES <e/d> <keyFilename> <inputFilename>
 
     <e/d>: [e] Encrypt a file with provided key
